@@ -16,14 +16,11 @@ import {
   CartesianGrid,
 } from 'recharts';
 
-// Support both old format (arrays) and new format (data object from analytics API)
 interface AnalyticsChartsProps {
-  // Old format
   ticketsByCategory?: Array<{ name: string; count: number }>;
   ticketsByPriority?: Array<{ priority: string; count: number }>;
   ticketsByStatus?: Array<{ status: string; count: number }>;
   resolutionTrends?: Array<{ day: string; created: number; resolved: number }>;
-  // New format (from /api/analytics/overview response)
   data?: {
     ticketsByStatus?: Record<string, number>;
     ticketsByPriority?: Record<string, number>;
@@ -33,10 +30,10 @@ interface AnalyticsChartsProps {
   loading?: boolean;
 }
 
-const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6'];
+const BRAND_COLORS = ['#3F72AF', '#112D4E', '#5A8DC4', '#2E5E9B', '#DBE2EF', '#7BA4D0'];
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: '#94a3b8',
-  MEDIUM: '#6366f1',
+  LOW: '#DBE2EF',
+  MEDIUM: '#3F72AF',
   HIGH: '#f59e0b',
   URGENT: '#ef4444',
 };
@@ -51,25 +48,30 @@ export function AnalyticsCharts({
 }: AnalyticsChartsProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16 text-slate-400">
-        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mr-2" />
+      <div className="flex items-center justify-center py-16 text-[#3F72AF]">
+        <div className="w-6 h-6 border-2 border-[#3F72AF] border-t-transparent rounded-full animate-spin mr-2" />
         Loading charts...
       </div>
     );
   }
 
-  // Normalize from either format
-  const statusData: Array<{ status: string; count: number }> = ticketsByStatus ||
+  const statusData: Array<{ status: string; count: number }> =
+    ticketsByStatus ||
     (data?.ticketsByStatus
-      ? Object.entries(data.ticketsByStatus).map(([status, count]) => ({ status, count: count as number }))
+      ? Object.entries(data.ticketsByStatus).map(([status, count]) => ({
+          status,
+          count: count as number,
+        }))
       : []);
 
-  const priorityData: Array<{ priority: string; count: number }> = ticketsByPriority ||
+  const priorityData: Array<{ priority: string; count: number }> =
+    ticketsByPriority ||
     (data?.ticketsByPriority
-      ? Object.entries(data.ticketsByPriority).map(([priority, count]) => ({ priority, count: count as number }))
+      ? Object.entries(data.ticketsByPriority).map(([priority, count]) => ({
+          priority,
+          count: count as number,
+        }))
       : []);
-
-  const categoryData: Array<{ name: string; count: number }> = ticketsByCategory || [];
 
   const trendsData = resolutionTrends || [
     { day: 'Mon', created: 8, resolved: 6 },
@@ -84,32 +86,39 @@ export function AnalyticsCharts({
   return (
     <div className="space-y-5">
       {/* Resolution Trends */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+      <div className="card-3d rounded-2xl p-5 shadow-md">
         <div className="mb-4">
-          <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Weekly Resolution Trends</h3>
-          <p className="text-xs text-slate-500">Tickets created vs resolved</p>
+          <h3 className="font-extrabold text-sm text-[#112D4E]">Weekly Resolution Trends</h3>
+          <p className="text-xs text-[#3F72AF] font-medium">Tickets created vs resolved</p>
         </div>
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendsData}>
               <defs>
                 <linearGradient id="colorCreated" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#3F72AF" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#3F72AF" stopOpacity={0.02} />
                 </linearGradient>
                 <linearGradient id="colorResolved" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#112D4E" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#112D4E" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-              <XAxis dataKey="day" fontSize={11} stroke="#888" />
-              <YAxis fontSize={11} stroke="#888" />
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} stroke="#DBE2EF" />
+              <XAxis dataKey="day" fontSize={11} stroke="#112D4E" opacity={0.7} />
+              <YAxis fontSize={11} stroke="#112D4E" opacity={0.7} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                contentStyle={{
+                  backgroundColor: '#112D4E',
+                  borderRadius: '12px',
+                  border: '1px solid #3F72AF',
+                  color: '#F9F7F7',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                }}
               />
-              <Area type="monotone" dataKey="created" stroke="#6366f1" fillOpacity={1} fill="url(#colorCreated)" name="Created" />
-              <Area type="monotone" dataKey="resolved" stroke="#10b981" fillOpacity={1} fill="url(#colorResolved)" name="Resolved" />
+              <Area type="monotone" dataKey="created" stroke="#3F72AF" strokeWidth={2} fillOpacity={1} fill="url(#colorCreated)" name="Created" />
+              <Area type="monotone" dataKey="resolved" stroke="#112D4E" strokeWidth={2} fillOpacity={1} fill="url(#colorResolved)" name="Resolved" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -117,10 +126,9 @@ export function AnalyticsCharts({
 
       {/* Status & Priority */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Status Pie */}
         {statusData.length > 0 && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white mb-4">Status Breakdown</h3>
+          <div className="card-3d rounded-2xl p-5 shadow-md">
+            <h3 className="font-extrabold text-sm text-[#112D4E] mb-4">Status Breakdown</h3>
             <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -135,11 +143,17 @@ export function AnalyticsCharts({
                     nameKey="status"
                   >
                     {statusData.map((_, index) => (
-                      <Cell key={`s-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`s-${index}`} fill={BRAND_COLORS[index % BRAND_COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '11px' }}
+                    contentStyle={{
+                      backgroundColor: '#112D4E',
+                      borderRadius: '12px',
+                      border: '1px solid #3F72AF',
+                      color: '#F9F7F7',
+                      fontSize: '11px',
+                    }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -147,22 +161,27 @@ export function AnalyticsCharts({
           </div>
         )}
 
-        {/* Priority Bar */}
         {priorityData.length > 0 && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white mb-4">Priority Levels</h3>
+          <div className="card-3d rounded-2xl p-5 shadow-md">
+            <h3 className="font-extrabold text-sm text-[#112D4E] mb-4">Priority Levels</h3>
             <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={priorityData}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                  <XAxis dataKey="priority" fontSize={10} stroke="#888" />
-                  <YAxis fontSize={10} stroke="#888" />
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} stroke="#DBE2EF" />
+                  <XAxis dataKey="priority" fontSize={10} stroke="#112D4E" opacity={0.7} />
+                  <YAxis fontSize={10} stroke="#112D4E" opacity={0.7} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '11px' }}
+                    contentStyle={{
+                      backgroundColor: '#112D4E',
+                      borderRadius: '12px',
+                      border: '1px solid #3F72AF',
+                      color: '#F9F7F7',
+                      fontSize: '11px',
+                    }}
                   />
-                  <Bar dataKey="count" radius={[5, 5, 0, 0]}>
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                     {priorityData.map((entry) => (
-                      <Cell key={entry.priority} fill={PRIORITY_COLORS[entry.priority] || '#6366f1'} />
+                      <Cell key={entry.priority} fill={PRIORITY_COLORS[entry.priority] || '#3F72AF'} />
                     ))}
                   </Bar>
                 </BarChart>

@@ -59,8 +59,8 @@ export default function FraudPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F7F7]">
+        <div className="w-8 h-8 border-3 border-[#3F72AF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -79,76 +79,99 @@ export default function FraudPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col bg-[#F9F7F7] text-[#112D4E]">
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-6 lg:p-8 overflow-auto">
+        <main className="flex-1 p-6 lg:p-8 overflow-auto max-w-7xl mx-auto w-full">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <ShieldAlert className="w-6 h-6 text-red-500" />
-                Fraud Detection
+              <h1 className="text-2xl sm:text-3xl font-black text-[#112D4E] flex items-center gap-2.5">
+                <ShieldAlert className="w-7 h-7 text-rose-600" />
+                Fraud &amp; Risk Screening
               </h1>
-              <p className="text-sm text-slate-500 mt-0.5">AI-powered risk screening and review workflows</p>
+              <p className="text-sm font-medium text-[#112D4E]/70 mt-1">
+                Real-time transaction anomaly screening and supervisor review trails
+              </p>
             </div>
             <button
               onClick={fetchEvents}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#DBE2EF] bg-white text-xs font-bold text-[#112D4E] hover:bg-[#DBE2EF]/30 transition-all shadow-xs active:translate-y-0.5"
             >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
+              <RefreshCw className="w-4 h-4 text-[#3F72AF]" />
+              Refresh Events
             </button>
           </div>
 
-          {/* Stats */}
+          {/* Stats Grid with 3D cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
-              { label: 'Total Alerts', value: stats.total, icon: <ShieldAlert className="w-5 h-5" />, color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40' },
-              { label: 'Pending Review', value: stats.pending, icon: <Clock className="w-5 h-5" />, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40' },
-              { label: 'Critical Risk', value: stats.critical, icon: <AlertTriangle className="w-5 h-5" />, color: 'text-red-500 bg-red-50 dark:bg-red-950/40' },
-              { label: 'Reviewed', value: stats.reviewed, icon: <CheckCircle className="w-5 h-5" />, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40' },
+              {
+                label: 'Total Screened',
+                value: stats.total,
+                icon: <ShieldAlert className="w-5 h-5 text-[#3F72AF]" />,
+              },
+              {
+                label: 'Pending Review',
+                value: stats.pending,
+                icon: <Clock className="w-5 h-5 text-amber-600" />,
+              },
+              {
+                label: 'Critical Risk',
+                value: stats.critical,
+                icon: <AlertTriangle className="w-5 h-5 text-rose-600" />,
+              },
+              {
+                label: 'Audit Reviewed',
+                value: stats.reviewed,
+                icon: <CheckCircle className="w-5 h-5 text-emerald-600" />,
+              },
             ].map((s) => (
-              <div key={s.label} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${s.color}`}>
+              <div key={s.label} className="card-3d rounded-2xl p-5 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#DBE2EF] flex items-center justify-center mb-3 shadow-xs">
                   {s.icon}
                 </div>
-                <div className="text-2xl font-extrabold text-slate-900 dark:text-white">{fetching ? '—' : s.value}</div>
-                <div className="text-xs text-slate-500 mt-0.5">{s.label}</div>
+                <div className="text-2xl sm:text-3xl font-black text-[#112D4E]">
+                  {fetching ? '—' : s.value}
+                </div>
+                <div className="text-xs font-bold uppercase tracking-wider text-[#112D4E]/60 mt-1">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-5">
+          <div className="card-3d p-4 rounded-2xl mb-6 flex flex-wrap gap-4 items-center justify-between shadow-xs">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <Filter className="w-4 h-4 text-slate-400" />
-              <span className="text-xs text-slate-500 font-semibold">Status:</span>
+              <Filter className="w-4 h-4 text-[#3F72AF]" />
+              <span className="text-xs text-[#112D4E] font-bold mr-1">Status:</span>
               {['ALL', 'PENDING_REVIEW', 'REVIEWED', 'ESCALATED', 'DISMISSED'].map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     statusFilter === s
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                      ? 'btn-3d text-white shadow-xs'
+                      : 'bg-white border border-[#DBE2EF] text-[#112D4E]/70 hover:bg-[#DBE2EF]/30'
                   }`}
                 >
                   {s === 'ALL' ? 'All' : s.replace(/_/g, ' ')}
                 </button>
               ))}
             </div>
+
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs text-slate-500 font-semibold">Risk:</span>
+              <span className="text-xs text-[#112D4E] font-bold mr-1">Risk:</span>
               {['ALL', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRiskFilter(r)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     riskFilter === r
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                      ? 'btn-3d-navy text-[#F9F7F7] shadow-xs'
+                      : 'bg-white border border-[#DBE2EF] text-[#112D4E]/70 hover:bg-[#DBE2EF]/30'
                   }`}
                 >
                   {r === 'ALL' ? 'All' : r}
@@ -157,34 +180,39 @@ export default function FraudPage() {
             </div>
           </div>
 
-          {/* Customer info displayed above each alert */}
+          {/* Event Cards */}
           {fetching ? (
             <div className="flex items-center justify-center py-20">
-              <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-3 border-[#3F72AF] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filteredEvents.length === 0 ? (
-            <div className="text-center py-20">
-              <ShieldAlert className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No fraud events found</p>
-              <p className="text-xs text-slate-400 mt-1">Risk alerts will appear here when detected by AI screening</p>
+            <div className="card-3d text-center py-20 rounded-2xl">
+              <ShieldAlert className="w-12 h-12 text-[#3F72AF]/40 mx-auto mb-4" />
+              <p className="text-[#112D4E] font-bold text-base">No fraud anomalies detected</p>
+              <p className="text-xs text-[#112D4E]/60 font-medium mt-1">
+                Risk alerts will appear here when telemetry flags anomalous transaction velocity.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {filteredEvents.map((event) => (
                 <div key={event.id} className="space-y-2">
-                  {/* Customer header */}
                   <div className="flex items-center justify-between px-1">
-                    <div className="text-xs text-slate-500">
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">{event.customer.name}</span>
-                      {' '}·{' '}{event.customer.email}
-                      {' '}·{' '}{new Date(event.createdAt).toLocaleString()}
+                    <div className="text-xs text-[#112D4E]/70 font-semibold">
+                      <span className="font-black text-[#112D4E]">
+                        {event.customer.name}
+                      </span>{' '}
+                      · {event.customer.email} · {new Date(event.createdAt).toLocaleString()}
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      event.status === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' :
-                      event.status === 'REVIEWED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' :
-                      event.status === 'ESCALATED' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' :
-                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                    }`}>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        event.status === 'PENDING_REVIEW'
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                          : event.status === 'REVIEWED'
+                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                          : 'bg-[#DBE2EF] text-[#112D4E] border border-[#DBE2EF]'
+                      }`}
+                    >
                       {event.status.replace(/_/g, ' ')}
                     </span>
                   </div>
@@ -198,8 +226,16 @@ export default function FraudPage() {
                       status: event.status,
                       signals: event.signals,
                     }}
-                    onReview={event.status === 'PENDING_REVIEW' ? () => setSelectedEventId(event.id) : undefined}
-                    onEscalate={event.status === 'PENDING_REVIEW' ? () => setSelectedEventId(event.id) : undefined}
+                    onReview={
+                      event.status === 'PENDING_REVIEW'
+                        ? () => setSelectedEventId(event.id)
+                        : undefined
+                    }
+                    onEscalate={
+                      event.status === 'PENDING_REVIEW'
+                        ? () => setSelectedEventId(event.id)
+                        : undefined
+                    }
                   />
                 </div>
               ))}
@@ -208,13 +244,15 @@ export default function FraudPage() {
         </main>
       </div>
 
-      {/* Review Dialog */}
       {selectedEventId && (
         <RiskReviewDialog
           isOpen={!!selectedEventId}
           eventId={selectedEventId}
           onClose={() => setSelectedEventId(null)}
-          onSuccess={() => { setSelectedEventId(null); fetchEvents(); }}
+          onSuccess={() => {
+            setSelectedEventId(null);
+            fetchEvents();
+          }}
         />
       )}
     </div>

@@ -43,17 +43,17 @@ export function Modal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#112D4E]/60 backdrop-blur-md animate-in fade-in duration-200">
       <div
-        className={`w-full ${maxWidths[maxWidth]} bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform transition-all`}
+        className={`w-full ${maxWidths[maxWidth]} bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#DBE2EF] overflow-hidden transform transition-all card-3d`}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#DBE2EF] bg-gradient-to-r from-white to-[#F9F7F7]">
+          <h3 className="text-lg font-bold text-[#112D4E]">{title}</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-xl text-[#3F72AF] hover:text-[#112D4E] hover:bg-[#DBE2EF]/60 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

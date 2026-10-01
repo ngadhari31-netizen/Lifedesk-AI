@@ -2,9 +2,7 @@ import React from 'react';
 import { Sparkles, Lightbulb } from 'lucide-react';
 
 interface AIInsightCardProps {
-  // Old format
   insights?: string[];
-  // New format (from analytics API response object)
   data?: {
     overview?: {
       totalTickets?: number;
@@ -19,7 +17,6 @@ interface AIInsightCardProps {
 }
 
 export function AIInsightCard({ insights, data, loading }: AIInsightCardProps) {
-  // Generate insights from data if no explicit insights provided
   const computedInsights: string[] = insights || [];
 
   if (computedInsights.length === 0 && data?.overview) {
@@ -31,22 +28,22 @@ export function AIInsightCard({ insights, data, loading }: AIInsightCardProps) {
       computedInsights.push(`${ov.openTickets} tickets currently open. Consider prioritizing URGENT and HIGH items.`);
     }
     if ((ov.satisfactionRate ?? 0) > 80) {
-      computedInsights.push(`Customer satisfaction at ${ov.satisfactionRate}% — above industry benchmark of 75%.`);
+      computedInsights.push(`Customer satisfaction at ${ov.satisfactionRate}% — above benchmark standards.`);
     }
     if ((ov.avgResolutionHours ?? 0) > 0) {
       computedInsights.push(`Average resolution time: ${ov.avgResolutionHours}h. AI-assisted tickets resolve ~40% faster.`);
     }
     if ((ov.resolvedTickets ?? 0) > 0) {
-      computedInsights.push(`${ov.resolvedTickets} tickets resolved. Knowledge base articles may reduce repeat queries.`);
+      computedInsights.push(`${ov.resolvedTickets} tickets resolved. Knowledge base articles reduce repeat queries.`);
     }
   }
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/50 dark:from-indigo-950/30 dark:via-slate-900 dark:to-purple-950/20 p-5 shadow-sm">
+      <div className="card-3d rounded-2xl p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs text-slate-500">Generating AI insights...</span>
+          <div className="w-5 h-5 border-2 border-[#3F72AF] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-[#112D4E]/70">Generating operational intelligence...</span>
         </div>
       </div>
     );
@@ -55,18 +52,18 @@ export function AIInsightCard({ insights, data, loading }: AIInsightCardProps) {
   if (computedInsights.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/50 dark:from-indigo-950/30 dark:via-slate-900 dark:to-purple-950/20 p-5 shadow-sm space-y-3">
-      <div className="flex items-center justify-between border-b border-indigo-100 dark:border-indigo-900/60 pb-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-500/30">
-            <Sparkles className="w-4 h-4" />
+    <div className="card-3d rounded-2xl p-5 shadow-md space-y-3.5 border border-[#DBE2EF]">
+      <div className="flex items-center justify-between border-b border-[#DBE2EF] pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl btn-3d-navy text-[#F9F7F7] shadow-sm">
+            <Sparkles className="w-4 h-4 text-[#DBE2EF]" />
           </div>
           <div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">AI Insights</h3>
-            <p className="text-[11px] text-slate-500">Live operational intelligence</p>
+            <h3 className="font-extrabold text-sm text-[#112D4E]">Operational Intelligence</h3>
+            <p className="text-[11px] font-medium text-[#3F72AF]">Real-time telemetry analysis</p>
           </div>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+        <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#3F72AF]/15 text-[#3F72AF] border border-[#3F72AF]/30">
           Live
         </span>
       </div>
@@ -75,12 +72,12 @@ export function AIInsightCard({ insights, data, loading }: AIInsightCardProps) {
         {computedInsights.slice(0, 5).map((insight, idx) => (
           <div
             key={idx}
-            className="flex items-start gap-2.5 p-3 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-sm"
+            className="flex items-start gap-2.5 p-3 rounded-xl bg-white/90 border border-[#DBE2EF] text-xs text-[#112D4E] shadow-xs"
           >
-            <div className="mt-0.5 p-1 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 shrink-0">
+            <div className="mt-0.5 p-1 rounded-lg bg-[#DBE2EF] text-[#3F72AF] shrink-0">
               <Lightbulb className="w-3.5 h-3.5" />
             </div>
-            <p className="leading-relaxed">{insight}</p>
+            <p className="leading-relaxed font-medium">{insight}</p>
           </div>
         ))}
       </div>

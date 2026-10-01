@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
-import { Search, Filter, ShieldAlert, ChevronRight, User, Ticket, Loader2 } from 'lucide-react';
+import { Search, ShieldAlert, ChevronRight, User, Ticket } from 'lucide-react';
 
 interface TicketItem {
   id: string;
@@ -63,9 +63,9 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
       case 'HIGH':
         return <Badge variant="warning" size="sm">HIGH</Badge>;
       case 'MEDIUM':
-        return <Badge variant="default" size="sm">MEDIUM</Badge>;
+        return <Badge variant="blue" size="sm">MEDIUM</Badge>;
       default:
-        return <Badge variant="neutral" size="sm">LOW</Badge>;
+        return <Badge variant="default" size="sm">LOW</Badge>;
     }
   };
 
@@ -75,29 +75,29 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
       case 'CLOSED':
         return <Badge variant="success" size="sm">{status.replace(/_/g, ' ')}</Badge>;
       case 'IN_PROGRESS':
-        return <Badge variant="default" size="sm">IN PROGRESS</Badge>;
+        return <Badge variant="blue" size="sm">IN PROGRESS</Badge>;
       case 'WAITING_FOR_CUSTOMER':
         return <Badge variant="warning" size="sm">WAITING</Badge>;
       case 'ESCALATED':
         return <Badge variant="danger" size="sm">ESCALATED</Badge>;
       default:
-        return <Badge variant="neutral" size="sm">{status}</Badge>;
+        return <Badge variant="default" size="sm">{status}</Badge>;
     }
   };
 
   return (
     <div className="space-y-4">
       {/* Search and Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="card-3d p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3F72AF]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tickets by ID, title, description, customer..."
-            className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-[#DBE2EF] bg-white text-[#112D4E] placeholder-[#3F72AF]/40 focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20 focus:border-[#3F72AF]"
           />
         </div>
 
@@ -107,7 +107,7 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="text-xs font-semibold px-3 py-2 rounded-xl border border-[#DBE2EF] bg-white text-[#112D4E] focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20"
           >
             <option value="ALL">All Statuses</option>
             <option value="OPEN">Open</option>
@@ -123,7 +123,7 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="text-xs font-semibold px-3 py-2 rounded-xl border border-[#DBE2EF] bg-white text-[#112D4E] focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20"
           >
             <option value="ALL">All Priorities</option>
             <option value="URGENT">Urgent</option>
@@ -136,7 +136,7 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
           <select
             value={riskFilter}
             onChange={(e) => setRiskFilter(e.target.value)}
-            className="text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="text-xs font-semibold px-3 py-2 rounded-xl border border-[#DBE2EF] bg-white text-[#112D4E] focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20"
           >
             <option value="ALL">All Risk Levels</option>
             <option value="FLAGGED">Flagged for Review</option>
@@ -146,32 +146,32 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
       </div>
 
       {/* Ticket Table */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+      <div className="card-3d rounded-2xl overflow-hidden shadow-md">
         {filteredTickets.length === 0 ? (
           <div className="py-16 text-center">
-            <Ticket className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">No tickets found</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              We couldn't find anything matching your search filters or you haven't opened any support requests yet.
+            <Ticket className="w-10 h-10 text-[#3F72AF]/40 mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-[#112D4E]">No tickets found</h3>
+            <p className="text-xs font-medium text-[#112D4E]/60 mt-1 max-w-sm mx-auto">
+              We couldn&apos;t find any records matching your search filters.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-950/70 border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <thead className="bg-[#DBE2EF]/40 border-b border-[#DBE2EF] text-[11px] font-black uppercase tracking-wider text-[#112D4E]/80">
                 <tr>
-                  <th className="py-3 px-4">Ticket</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Issue & AI Summary</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Priority</th>
-                  <th className="py-3 px-4">Risk Screening</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Assigned</th>
-                  <th className="py-3 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-4">Ticket</th>
+                  <th className="py-3.5 px-4">Customer</th>
+                  <th className="py-3.5 px-4">Issue &amp; AI Summary</th>
+                  <th className="py-3.5 px-4">Category</th>
+                  <th className="py-3.5 px-4">Priority</th>
+                  <th className="py-3.5 px-4">Risk Screening</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">Assigned</th>
+                  <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-[#DBE2EF]/60 bg-white/70">
                 {filteredTickets.map((t) => {
                   const hasFraud = t.fraudEvents && t.fraudEvents.length > 0;
                   const fraud = hasFraud ? t.fraudEvents![0] : null;
@@ -179,10 +179,10 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
                   return (
                     <tr
                       key={t.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                      className="hover:bg-[#DBE2EF]/30 transition-colors group"
                     >
                       {/* Ticket Number */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#3F72AF] whitespace-nowrap">
                         <Link href={`${basePath}/${t.id}`} className="hover:underline flex items-center gap-1">
                           <span>#{t.ticketNumber}</span>
                         </Link>
@@ -191,25 +191,25 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
                       {/* Customer */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-[10px] text-slate-700 dark:text-slate-300">
+                          <div className="w-6 h-6 rounded-full bg-[#DBE2EF] text-[#112D4E] flex items-center justify-center font-bold text-[10px]">
                             {t.customer?.name ? t.customer.name[0] : 'U'}
                           </div>
                           <div>
-                            <div className="font-semibold text-slate-900 dark:text-white leading-tight">
+                            <div className="font-bold text-[#112D4E] leading-tight">
                               {t.customer?.name || 'Customer'}
                             </div>
-                            <div className="text-[10px] text-slate-400">{t.customer?.email}</div>
+                            <div className="text-[10px] text-[#112D4E]/60">{t.customer?.email}</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Subject & Summary */}
                       <td className="py-3.5 px-4 max-w-xs">
-                        <Link href={`${basePath}/${t.id}`} className="block group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-                          <div className="font-bold text-slate-900 dark:text-slate-100 truncate">
+                        <Link href={`${basePath}/${t.id}`} className="block group-hover:text-[#3F72AF]">
+                          <div className="font-bold text-[#112D4E] truncate">
                             {t.subject}
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                          <div className="text-[11px] font-medium text-[#112D4E]/70 truncate mt-0.5">
                             {t.aiSummary || t.description}
                           </div>
                         </Link>
@@ -217,7 +217,7 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
 
                       {/* Category */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <Badge variant="purple" size="sm">
+                        <Badge variant="default" size="sm">
                           {t.category?.name || 'General'}
                         </Badge>
                       </td>
@@ -230,12 +230,12 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
                       {/* Risk Screening */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         {fraud ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                             <ShieldAlert className="w-3 h-3 text-amber-600" />
                             <span>{fraud.riskLevel} ({fraud.riskScore})</span>
                           </span>
                         ) : (
-                          <span className="text-[11px] text-slate-400 font-medium">Clear</span>
+                          <span className="text-[11px] text-[#112D4E]/50 font-medium">Clear</span>
                         )}
                       </td>
 
@@ -245,14 +245,14 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
                       </td>
 
                       {/* Assigned Agent */}
-                      <td className="py-3.5 px-4 whitespace-nowrap text-slate-600 dark:text-slate-400">
+                      <td className="py-3.5 px-4 whitespace-nowrap text-[#112D4E]/70 font-medium">
                         {t.assignedAgent ? (
                           <div className="flex items-center gap-1.5">
-                            <User className="w-3.5 h-3.5 text-indigo-500" />
+                            <User className="w-3.5 h-3.5 text-[#3F72AF]" />
                             <span>{t.assignedAgent.name}</span>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic">Unassigned</span>
+                          <span className="text-[#112D4E]/40 italic">Unassigned</span>
                         )}
                       </td>
 
@@ -260,7 +260,7 @@ export function TicketTable({ tickets, basePath = '/tickets', loading }: TicketT
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
                         <Link
                           href={`${basePath}/${t.id}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold hover:bg-indigo-100 transition-colors"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#DBE2EF] text-[#112D4E] font-bold hover:bg-[#3F72AF] hover:text-white transition-all shadow-xs"
                         >
                           <span>Open</span>
                           <ChevronRight className="w-3.5 h-3.5" />

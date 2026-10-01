@@ -39,7 +39,7 @@ const SAMPLE_STARTERS = [
 ];
 
 export default function ChatPage() {
-  const { user, loading, language } = useAuth();
+  const { user, loading, language, setLanguage } = useAuth();
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -105,11 +105,16 @@ export default function ChatPage() {
       const assistantMsg: Message = {
         id: Date.now().toString() + '_ai',
         role: 'assistant',
-        content: data.response?.message || data.response || 'I apologize, I encountered an issue. Please try again.',
+        content:
+          data.response?.message ||
+          data.response ||
+          'I apologize, I encountered an issue. Please try again.',
         timestamp: new Date(),
         ticketId: data.ticketId,
         ticketNumber: data.ticketNumber,
-        fraudAlert: data.riskAssessment?.riskLevel === 'HIGH' || data.riskAssessment?.riskLevel === 'CRITICAL',
+        fraudAlert:
+          data.riskAssessment?.riskLevel === 'HIGH' ||
+          data.riskAssessment?.riskLevel === 'CRITICAL',
       };
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (e) {
@@ -129,58 +134,90 @@ export default function ChatPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F7F7]">
+        <div className="w-8 h-8 border-3 border-[#3F72AF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col bg-[#F9F7F7] text-[#112D4E]">
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden max-w-6xl mx-auto w-full">
           {/* Chat Header */}
-          <div className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="border-b border-[#DBE2EF] bg-white/90 backdrop-blur-md px-6 py-4 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#3F72AF] to-[#112D4E] flex items-center justify-center shadow-md border-t border-white/20">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-indigo-500" />
+                  <h1 className="text-base font-black text-[#112D4E] flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-[#3F72AF]" />
                     AI Support Assistant
                   </h1>
-                  <p className="text-xs text-emerald-500 font-medium flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block animate-pulse" />
-                    Online • Powered by Gemini AI
+                  <p className="text-xs text-emerald-700 font-semibold flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full inline-block animate-ping" />
+                    Online • Gemini Engine Grounded
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Globe className="w-3.5 h-3.5" />
-                <span>{language === 'hi' ? 'हिंदी' : language === 'mr' ? 'मराठी' : 'English'}</span>
+              <div className="flex items-center gap-1 p-1 bg-[#DBE2EF]/50 rounded-xl border border-[#DBE2EF]">
+                <Globe className="w-3.5 h-3.5 text-[#3F72AF] ml-1.5" />
+                {[
+                  { code: 'en', label: 'English' },
+                  { code: 'hi', label: 'हिंदी' },
+                  { code: 'mr', label: 'मराठी' },
+                ].map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      setLanguage(l.code);
+                      const langGreetings: Record<string, string> = {
+                        en: `Switched language to English. How can I help you today?`,
+                        hi: `भाषा हिंदी में बदली गई। मैं आज आपकी क्या सहायता कर सकता हूँ?`,
+                        mr: `भाषा मराठीत बदलली आहे. आज मी तुम्हाला कशी मदत करू शकतो?`,
+                      };
+                      setMessages((prev) => [
+                        ...prev,
+                        {
+                          id: Date.now().toString(),
+                          role: 'assistant',
+                          content: langGreetings[l.code] || langGreetings.en,
+                          timestamp: new Date(),
+                        },
+                      ]);
+                    }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      language === l.code
+                        ? 'btn-3d text-white shadow-xs'
+                        : 'text-[#112D4E]/80 hover:text-[#112D4E] hover:bg-white/60'
+                    }`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-            {/* Quick starters - show when only welcome message */}
+          {/* Messages Container */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 dot-pattern">
+            {/* Quick Starters */}
             {messages.length <= 1 && (
-              <div className="pb-2">
-                <p className="text-xs font-semibold text-slate-400 mb-2 flex items-center gap-1.5">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  Quick starters:
+              <div className="pb-3">
+                <p className="text-xs font-bold text-[#112D4E]/70 mb-2.5 flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-[#3F72AF]" />
+                  Quick prompts:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {SAMPLE_STARTERS.map((s) => (
                     <button
                       key={s}
                       onClick={() => sendMessage(s)}
-                      className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                      className="px-3.5 py-2 rounded-xl bg-white/90 border border-[#DBE2EF] text-xs font-semibold text-[#112D4E] hover:border-[#3F72AF] hover:text-[#3F72AF] shadow-xs active:translate-y-0.5 transition-all text-left"
                     >
                       {s}
                     </button>
@@ -195,49 +232,58 @@ export default function ChatPage() {
                 className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#3F72AF] to-[#112D4E] flex items-center justify-center shrink-0 mt-0.5 text-white shadow-xs">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                 )}
 
-                <div className={`max-w-[75%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1.5`}>
+                <div
+                  className={`max-w-[75%] ${
+                    msg.role === 'user' ? 'items-end' : 'items-start'
+                  } flex flex-col gap-1.5`}
+                >
                   <div
-                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                       msg.role === 'user'
-                        ? 'bg-indigo-600 text-white rounded-tr-sm'
-                        : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-tl-sm shadow-sm'
+                        ? 'btn-3d text-white font-medium rounded-tr-xs'
+                        : 'glass-card text-[#112D4E] rounded-tl-xs font-medium'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
 
-                  {/* Ticket created notification */}
+                  {/* Ticket created indicator */}
                   {msg.ticketNumber && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs">
-                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                      <span>Ticket <strong>{msg.ticketNumber}</strong> created</span>
-                      <Link href={`/tickets/${msg.ticketId}`} className="underline font-semibold hover:text-emerald-600">
-                        View →
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-medium shadow-xs">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>
+                        Ticket <strong className="font-mono">{msg.ticketNumber}</strong> registered
+                      </span>
+                      <Link
+                        href={`/tickets/${msg.ticketId}`}
+                        className="underline font-bold text-emerald-900 hover:text-emerald-700 ml-1"
+                      >
+                        Track Ticket →
                       </Link>
                     </div>
                   )}
 
-                  {/* Fraud alert notification */}
+                  {/* Fraud alert indicator */}
                   {msg.fraudAlert && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                      <span>Potential risk detected — flagged for review</span>
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-medium shadow-xs">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>Telemetry Alert: Flagged for supervisor risk assessment</span>
                     </div>
                   )}
 
-                  <span className="text-[10px] text-slate-400 px-1">
+                  <span className="text-[10px] font-medium text-[#112D4E]/50 px-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
 
                 {msg.role === 'user' && (
-                  <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-                    <User className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                  <div className="w-8 h-8 rounded-xl bg-[#DBE2EF] border border-[#3F72AF]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#112D4E] shadow-xs">
+                    <User className="w-4 h-4" />
                   </div>
                 )}
               </div>
@@ -245,13 +291,13 @@ export default function ChatPage() {
 
             {sending && (
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#3F72AF] to-[#112D4E] flex items-center justify-center shrink-0 text-white">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
-                  <div className="flex items-center gap-2 text-slate-500 text-sm">
-                    <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
-                    <span>AI is thinking...</span>
+                <div className="glass-card rounded-2xl rounded-tl-xs px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-[#3F72AF] text-sm font-semibold">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#3F72AF]" />
+                    <span>AI reasoning and grounding answers...</span>
                   </div>
                 </div>
               </div>
@@ -261,7 +307,7 @@ export default function ChatPage() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+          <div className="border-t border-[#DBE2EF] bg-white/95 backdrop-blur-md p-4">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -281,14 +327,14 @@ export default function ChatPage() {
                   }}
                   placeholder="Describe your issue... (Enter to send, Shift+Enter for new line)"
                   rows={1}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none max-h-32 overflow-y-auto"
+                  className="w-full px-4 py-3 rounded-xl border border-[#DBE2EF] bg-[#F9F7F7] text-sm text-[#112D4E] placeholder:text-[#3F72AF]/50 focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20 focus:border-[#3F72AF] focus:bg-white resize-none max-h-32 overflow-y-auto transition-all"
                   style={{ height: 'auto' }}
                 />
               </div>
               <button
                 type="submit"
                 disabled={!input.trim() || sending}
-                className="p-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 shadow-lg shadow-indigo-500/20"
+                className="btn-3d p-3 rounded-xl text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0 shadow-md active:translate-y-0.5"
               >
                 {sending ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -297,8 +343,8 @@ export default function ChatPage() {
                 )}
               </button>
             </form>
-            <p className="text-[10px] text-slate-400 mt-2 text-center">
-              AI responses are based on your knowledge base. For urgent issues, a ticket will be automatically created.
+            <p className="text-[11px] font-medium text-[#112D4E]/60 mt-2 text-center">
+              AI answers are grounded in enterprise documentation. Complex queries are escalated seamlessly.
             </p>
           </div>
         </main>

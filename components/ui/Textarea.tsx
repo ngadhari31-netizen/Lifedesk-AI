@@ -11,20 +11,22 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#112D4E] mb-1.5">
             {label}
           </label>
         )}
         <textarea
           ref={ref}
           className={clsx(
-            'block w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-500 transition-colors',
-            error && 'border-rose-500 focus:border-rose-500 focus:ring-rose-500',
+            'block w-full rounded-xl border border-[#DBE2EF] bg-white/90 backdrop-blur-sm px-3.5 py-2.5 text-sm text-[#112D4E] placeholder-[#3F72AF]/40 transition-all duration-200',
+            'focus:border-[#3F72AF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/20 focus:shadow-md',
+            'disabled:bg-[#DBE2EF]/30 disabled:text-[#112D4E]/40',
+            error && 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20',
             className
           )}
           {...props}
         />
-        {error && <p className="mt-1 text-xs text-rose-500">{error}</p>}
+        {error && <p className="mt-1.5 text-xs font-medium text-rose-600">{error}</p>}
       </div>
     );
   }

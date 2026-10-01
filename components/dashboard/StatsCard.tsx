@@ -7,10 +7,9 @@ interface StatsCardProps {
   subtitle?: string;
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
-  // Support both icon as component or as JSX element
   icon?: React.ReactNode;
-  variant?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple';
-  color?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple';
+  variant?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple' | 'blue' | 'navy';
+  color?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple' | 'blue' | 'navy';
 }
 
 export function StatsCard({
@@ -23,50 +22,40 @@ export function StatsCard({
   variant,
   color,
 }: StatsCardProps) {
-  const resolvedVariant = variant || color || 'indigo';
-
-  const iconVariants: Record<string, string> = {
-    indigo: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800',
-    emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800',
-    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800',
-    rose: 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200 dark:border-rose-800',
-    purple: 'bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 border border-purple-200 dark:border-purple-800',
-  };
-
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div className="card-3d rounded-2xl p-5 hover:-translate-y-1 transition-all duration-200">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#112D4E]/70">
           {title}
         </span>
         {icon && (
-          <div className={clsx('flex h-10 w-10 items-center justify-center rounded-xl', iconVariants[resolvedVariant])}>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#DBE2EF] text-[#3F72AF] border border-[#3F72AF]/30 shadow-xs">
             {icon}
           </div>
         )}
       </div>
 
-      <div className="mt-2.5">
-        <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+      <div className="mt-3">
+        <div className="text-2xl sm:text-3xl font-extrabold text-[#112D4E] tracking-tight">
           {value}
         </div>
         {(subtitle || change) && (
-          <div className="flex items-center gap-2 mt-1.5 text-xs text-slate-500">
+          <div className="flex items-center gap-2 mt-1.5 text-xs text-[#112D4E]/70">
             {change && (
               <span
                 className={clsx(
-                  'font-semibold',
+                  'font-bold px-1.5 py-0.5 rounded',
                   changeType === 'positive'
-                    ? 'text-emerald-600'
+                    ? 'text-emerald-700 bg-emerald-100'
                     : changeType === 'negative'
-                    ? 'text-rose-600'
-                    : 'text-slate-500'
+                    ? 'text-rose-700 bg-rose-100'
+                    : 'text-[#112D4E] bg-[#DBE2EF]'
                 )}
               >
                 {change}
               </span>
             )}
-            {subtitle && <span>{subtitle}</span>}
+            {subtitle && <span className="font-medium">{subtitle}</span>}
           </div>
         )}
       </div>

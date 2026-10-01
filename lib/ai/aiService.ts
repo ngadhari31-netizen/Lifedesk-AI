@@ -311,27 +311,63 @@ function fallbackCustomerResponse(
 ): AiChatResponse {
   const lower = message.toLowerCase();
 
-  // Multilingual Marathi
-  if (language === 'mr' || lower.includes('माझ्या') || lower.includes('पैसे')) {
+  // Multilingual Marathi (मराठी)
+  if (language === 'mr' || lower.includes('माझ्या') || lower.includes('पैसे') || lower.includes('नमस्कार') || lower.includes('ऑर्डर')) {
+    if (lower.includes('रद्द') || lower.includes('पैसे') || lower.includes('payment') || lower.includes('refund') || lower.includes('परतावा')) {
+      return {
+        message:
+          'नमस्कार! मी AI LifeDesk सहाय्यक आहे. काळजी करू नका, जर तुमचे पैसे कापले गेले असतील तर तुमचे पैसे पूर्णपणे सुरक्षित आहेत. सामान्यतः बँक ३-५ कामाच्या दिवसांत परतावा जमा करते. मी तुमच्यासाठी त्वरित एक बिलिंग सपोर्ट तिकीट तयार करू का?',
+        suggested_actions: ['सपोर्ट तिकीट तयार करा (Create Ticket)', 'तज्ञांशी बोला (Talk to Human)', 'परतावा स्थिती तपासा'],
+        can_resolve: false,
+        should_escalate: true,
+        escalation_reason: 'Payment or refund inquiry in Marathi',
+      };
+    }
+    if (lower.includes('ऑर्डर') || lower.includes('order') || lower.includes('डिलिव्हरी') || lower.includes('ट्रॅक') || lower.includes('track')) {
+      return {
+        message:
+          'नमस्कार! मी तुमची ऑर्डर तपासण्यात मदत करू शकतो. कृपया तुमचा ऑर्डर आयडी (उदा. #ORD-9821) सांगा जेणेकरून मी तात्काळ कुरिअर ट्रॅकिंग आणि डिलिव्हरीची अचूक तारीख सांगू शकेन.',
+        suggested_actions: ['ऑर्डर ट्रॅक करा (Track Order)', 'डिलिव्हरी पत्ता बदला', 'तज्ञांशी बोला'],
+        can_resolve: true,
+        should_escalate: false,
+      };
+    }
     return {
       message:
-        'नमस्कार! मी AI LifeDesk आहे. काळजी करू नका, जर तुमचे पैसे कापले गेले असतील आणि ऑर्डर रद्द झाली असेल तर आम्ही तातडीने मदत करू. आम्ही त्वरित एक सपोर्ट तिकीट तयार करू शकतो जेणेकरून आमची बिलिंग टीम २४ तासांत तुमचा परतावा तपासू शकेल.',
-      suggested_actions: ['सपोर्ट तिकीट तयार करा (Create Ticket)', 'तज्ञांशी बोला (Talk to Human)', 'ऑर्डर ट्रॅक करा'],
-      can_resolve: false,
-      should_escalate: true,
-      escalation_reason: 'Payment deducted without order confirmation in Marathi inquiry',
+        'नमस्कार! AI LifeDesk मध्ये आपले स्वागत आहे. मी तुम्हाला ऑर्डर, बिलिंग, खाते सुरक्षा किंवा सामान्य प्रश्नांमध्ये कशी मदत करू शकतो? कृपया तुमचा प्रश्न सांगा.',
+      suggested_actions: ['तिकीट तयार करा (Create Ticket)', 'वारंवार विचारले जाणारे प्रश्न (FAQ)', 'तज्ञांशी संपर्क'],
+      can_resolve: true,
+      should_escalate: false,
     };
   }
 
-  // Multilingual Hindi
-  if (language === 'hi' || lower.includes('नमस्ते') || lower.includes('रुपये')) {
+  // Multilingual Hindi (हिंदी)
+  if (language === 'hi' || lower.includes('नमस्ते') || lower.includes('रुपये') || lower.includes('कटा') || lower.includes('ऑर्डर')) {
+    if (lower.includes('कटा') || lower.includes('पैसे') || lower.includes('payment') || lower.includes('refund') || lower.includes('रिफंड') || lower.includes('cancel')) {
+      return {
+        message:
+          'नमस्ते! मैं AI LifeDesk हूँ। अगर आपके पैसे कट गए हैं और ऑर्डर कन्फर्म नहीं हुआ है, तो बिल्कुल चिंता न करें — आपका पैसा सुरक्षित है। बैंकिंग गेटवे 3 से 5 दिनों में रिफंड क्रेडिट कर देता है। क्या मैं आपके लिए तुरंत एक प्राथमिकता सपोर्ट टिकट बना दूँ?',
+        suggested_actions: ['सपोर्ट टिकट बनाएँ (Create Ticket)', 'कस्टमर केयर से बात करें', 'रिफंड स्थिति जांचें'],
+        can_resolve: false,
+        should_escalate: true,
+        escalation_reason: 'Payment or refund inquiry in Hindi',
+      };
+    }
+    if (lower.includes('ऑर्डर') || lower.includes('order') || lower.includes('डिलीवरी') || lower.includes('ट्रैक') || lower.includes('कहाँ')) {
+      return {
+        message:
+          'नमस्ते! मैं आपका ऑर्डर ट्रैक करने में पूरी मदद करूँगा। कृपया अपना ऑर्डर नंबर (जैसे #ORD-7741) साझा करें ताकि मैं लाइव लोकेशन और डिलीवरी का समय बता सकूँ।',
+        suggested_actions: ['ऑर्डर ट्रैक करें (Track Order)', 'डिलीवरी पता बदलें', 'सहायता टीम से बात करें'],
+        can_resolve: true,
+        should_escalate: false,
+      };
+    }
     return {
       message:
-        'नमस्ते! मैं AI LifeDesk हूँ। अगर आपके पैसे कट गए हैं और ऑर्डर कन्फर्म नहीं हुआ है, तो चिंता न करें। हमारी बिलिंग टीम इसे तुरंत सुलझाएगी। क्या मैं आपके लिए तुरंत एक सपोर्ट टिकट बना दूँ?',
-      suggested_actions: ['सपोर्ट टिकट बनाएँ (Create Ticket)', 'कस्टमर केयर से बात करें', 'ऑर्डर स्थिति देखें'],
-      can_resolve: false,
-      should_escalate: true,
-      escalation_reason: 'Payment deducted without order confirmation in Hindi inquiry',
+        'नमस्ते! AI LifeDesk में आपका स्वागत है। मैं आपकी ऑर्डर, बिलिंग, रिफंड या खाते से जुड़ी किसी भी समस्या में सहायता के लिए 24/7 तैयार हूँ। आप क्या जानना चाहते हैं?',
+      suggested_actions: ['सपोर्ट टिकट खोलें', 'हेल्प सेंटर देखें', 'एजेंट से बात करें'],
+      can_resolve: true,
+      should_escalate: false,
     };
   }
 

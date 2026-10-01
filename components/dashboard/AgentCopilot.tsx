@@ -105,51 +105,51 @@ export function AgentCopilot({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-5 space-y-4">
+    <div className="card-3d rounded-2xl p-5 space-y-4 shadow-md">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm shadow-indigo-500/30">
-            <Sparkles className="w-4 h-4" />
+      <div className="flex items-center justify-between pb-3 border-b border-[#DBE2EF]">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl btn-3d text-white shadow-xs">
+            <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
+            <h3 className="font-extrabold text-sm text-[#112D4E]">
               AI Agent Copilot
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] font-medium text-[#112D4E]/60">
               Drafts require human agent review before sending
             </p>
           </div>
         </div>
-        <Badge variant="purple" size="sm">
+        <Badge variant="blue" size="sm">
           Assist Mode
         </Badge>
       </div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      {/* Action Buttons with 3D effects */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         <button
           onClick={() => handleGenerateReply('Helpful resolution with next steps')}
           disabled={!!loadingAction}
-          className="p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 text-xs font-bold flex flex-col items-center gap-1.5 transition-colors"
+          className="p-3 rounded-xl border border-[#DBE2EF] bg-white hover:bg-[#DBE2EF]/30 text-[#112D4E] text-xs font-bold flex flex-col items-center gap-1.5 shadow-sm hover:shadow active:translate-y-0.5 transition-all"
         >
-          <Sparkles className="w-4 h-4 text-indigo-600" />
+          <Sparkles className="w-4 h-4 text-[#3F72AF]" />
           <span>Generate Reply</span>
         </button>
 
         <button
           onClick={handleSummarize}
           disabled={!!loadingAction}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:bg-slate-100 text-xs font-bold flex flex-col items-center gap-1.5 transition-colors"
+          className="p-3 rounded-xl border border-[#DBE2EF] bg-white hover:bg-[#DBE2EF]/30 text-[#112D4E] text-xs font-bold flex flex-col items-center gap-1.5 shadow-sm hover:shadow active:translate-y-0.5 transition-all"
         >
-          <FileText className="w-4 h-4 text-slate-600" />
+          <FileText className="w-4 h-4 text-[#112D4E]" />
           <span>Summarize</span>
         </button>
 
         <button
           onClick={handleExplain}
           disabled={!!loadingAction}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:bg-slate-100 text-xs font-bold flex flex-col items-center gap-1.5 transition-colors"
+          className="p-3 rounded-xl border border-[#DBE2EF] bg-white hover:bg-[#DBE2EF]/30 text-[#112D4E] text-xs font-bold flex flex-col items-center gap-1.5 shadow-sm hover:shadow active:translate-y-0.5 transition-all"
         >
           <Lightbulb className="w-4 h-4 text-amber-500" />
           <span>Explain Ticket</span>
@@ -158,45 +158,45 @@ export function AgentCopilot({
         <button
           onClick={() => handleGenerateReply('Follow up check-in on customer satisfaction')}
           disabled={!!loadingAction}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:bg-slate-100 text-xs font-bold flex flex-col items-center gap-1.5 transition-colors"
+          className="p-3 rounded-xl border border-[#DBE2EF] bg-white hover:bg-[#DBE2EF]/30 text-[#112D4E] text-xs font-bold flex flex-col items-center gap-1.5 shadow-sm hover:shadow active:translate-y-0.5 transition-all"
         >
           <Edit3 className="w-4 h-4 text-emerald-600" />
           <span>Draft Follow-up</span>
         </button>
       </div>
 
-      {/* Summary Box if generated */}
+      {/* Summary Box */}
       {summaryText && (
-        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs">
-          <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-indigo-500" />
+        <div className="p-3.5 rounded-xl bg-white/90 border border-[#DBE2EF] text-xs">
+          <div className="font-bold text-[#112D4E] flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-[#3F72AF]" />
             <span>AI Executive Summary</span>
           </div>
-          <p className="text-slate-600 dark:text-slate-300 mt-1">{summaryText}</p>
+          <p className="text-[#112D4E]/80 mt-1 leading-relaxed">{summaryText}</p>
         </div>
       )}
 
-      {/* Explanation Box if generated */}
+      {/* Explanation Box */}
       {explanation && (
-        <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs">
-          <div className="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+        <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 text-xs">
+          <div className="font-bold text-amber-900 flex items-center gap-1.5">
             <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
             <span>AI Operational Diagnosis</span>
           </div>
-          <p className="text-amber-800 dark:text-amber-300 mt-1">{explanation}</p>
+          <p className="text-amber-800 mt-1 leading-relaxed">{explanation}</p>
         </div>
       )}
 
       {/* Generated Draft Reply Box with Editor */}
       {draftReply ? (
-        <div className="space-y-3 p-4 rounded-xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-800">
+        <div className="space-y-3 p-4 rounded-xl bg-[#DBE2EF]/25 border border-[#DBE2EF]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-900 dark:text-indigo-200">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="flex items-center gap-1.5 font-bold text-xs text-[#112D4E]">
+              <Sparkles className="w-3.5 h-3.5 text-[#3F72AF]" />
               <span>AI Suggested Response (Editable by Agent)</span>
             </div>
             {copilotMeta?.tone && (
-              <Badge variant="neutral" size="sm">
+              <Badge variant="default" size="sm">
                 Tone: {copilotMeta.tone}
               </Badge>
             )}
@@ -206,14 +206,14 @@ export function AgentCopilot({
             value={draftReply}
             onChange={(e) => setDraftReply(e.target.value)}
             rows={4}
-            className="w-full text-xs sm:text-sm p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full text-xs sm:text-sm p-3 rounded-xl border border-[#DBE2EF] bg-white text-[#112D4E] focus:outline-none focus:ring-2 focus:ring-[#3F72AF]/30 focus:border-[#3F72AF]"
           />
 
           {copilotMeta?.key_points_addressed && (
-            <div className="flex flex-wrap gap-1 text-[11px] text-slate-500">
-              <span className="font-semibold">Key Points:</span>
+            <div className="flex flex-wrap gap-1 text-[11px] text-[#112D4E]/70">
+              <span className="font-bold">Key Points:</span>
               {copilotMeta.key_points_addressed.map((kp: string, idx: number) => (
-                <span key={idx} className="bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">
+                <span key={idx} className="bg-white px-2 py-0.5 rounded-md border border-[#DBE2EF] font-medium">
                   ✓ {kp}
                 </span>
               ))}
@@ -221,7 +221,7 @@ export function AgentCopilot({
           )}
 
           <div className="flex items-center justify-between pt-1">
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-[#112D4E]/60">
               Click apply to copy this drafted reply into the reply message composer below.
             </p>
             <Button
@@ -237,7 +237,7 @@ export function AgentCopilot({
           </div>
         </div>
       ) : (
-        <div className="py-4 text-center text-xs text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
+        <div className="py-5 text-center text-xs text-[#112D4E]/50 border border-dashed border-[#DBE2EF] rounded-xl bg-white/50">
           Click "Generate Reply" or any copilot button above to draft AI responses grounded in ticket context.
         </div>
       )}

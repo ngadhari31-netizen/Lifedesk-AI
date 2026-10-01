@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'success';
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'success' | 'navy' | 'glass';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   icon?: React.ReactNode;
@@ -23,27 +23,31 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
+      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer';
 
     const variants = {
       primary:
-        'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600',
+        'btn-3d text-white focus:ring-[#3F72AF]',
+      navy:
+        'btn-3d-navy text-[#F9F7F7] focus:ring-[#112D4E]',
       secondary:
-        'bg-slate-100 hover:bg-slate-200 text-slate-800 focus:ring-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100',
+        'bg-[#DBE2EF] hover:bg-[#ccd7e8] text-[#112D4E] border-b-2 border-[#b8c7dc] shadow-sm hover:shadow active:translate-y-0.5 focus:ring-[#3F72AF]',
       outline:
-        'border border-slate-300 hover:bg-slate-50 text-slate-700 focus:ring-indigo-500 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800',
+        'border-2 border-[#3F72AF] text-[#112D4E] hover:bg-[#DBE2EF]/40 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow active:translate-y-0.5 focus:ring-[#3F72AF]',
+      glass:
+        'glass text-[#112D4E] hover:bg-white/90 border border-white/80 shadow-glass hover:shadow-lg active:translate-y-0.5 focus:ring-[#3F72AF]',
       danger:
-        'bg-rose-600 hover:bg-rose-700 text-white focus:ring-rose-500 shadow-sm',
+        'bg-rose-600 hover:bg-rose-700 text-white border-b-2 border-rose-800 shadow-sm active:translate-y-0.5 focus:ring-rose-500',
       success:
-        'bg-emerald-600 hover:bg-emerald-700 text-white focus:ring-emerald-500 shadow-sm',
+        'bg-emerald-600 hover:bg-emerald-700 text-white border-b-2 border-emerald-800 shadow-sm active:translate-y-0.5 focus:ring-emerald-500',
       ghost:
-        'hover:bg-slate-100 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 focus:ring-slate-400',
+        'text-[#112D4E] hover:bg-[#DBE2EF]/50 hover:text-[#112D4E] focus:ring-[#3F72AF]',
     };
 
     const sizes = {
-      sm: 'px-2.5 py-1.5 text-xs gap-1.5',
+      sm: 'px-3 py-1.5 text-xs gap-1.5',
       md: 'px-4 py-2 text-sm gap-2',
-      lg: 'px-5 py-2.5 text-base gap-2.5',
+      lg: 'px-6 py-3 text-base gap-2.5',
     };
 
     return (

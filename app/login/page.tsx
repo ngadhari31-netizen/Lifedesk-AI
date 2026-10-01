@@ -1,123 +1,181 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Mail, Lock, User, Headphones, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Headphones, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 export default function LoginPage() {
-  const { login, quickLogin, user } = useAuth();
+  const { login, quickLogin, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [quickLoadingRole, setQuickLoadingRole] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // If already logged in, redirect
-  if (user) {
-    if (user.role === 'ADMIN') router.push('/admin');
-    else if (user.role === 'AGENT') router.push('/agent');
-    else router.push('/dashboard');
-  }
+  // Safe client-side redirect when user is authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (user.role === 'ADMIN') router.push('/admin');
+      else if (user.role === 'AGENT') router.push('/agent');
+      else router.push('/dashboard');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const result = await login(email, password);
-    if (!result.success) {
-      setError(result.error || 'Invalid credentials');
+    try {
+      const result = await login(email, password);
+      if (!result.success) {
+        if (result.error?.toLowerCase().includes('not found') || result.error?.toLowerCase().includes('invalid')) {
+          setError('Account not found or password incorrect. If you do not have an account yet, click Create Account below.');
+        } else {
+          setError(result.error || 'Invalid credentials');
+        }
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  const handleQuickLogin = async (role: 'CUSTOMER' | 'AGENT' | 'ADMIN') => {
+    setError(null);
+    setQuickLoadingRole(role);
+    try {
+      await quickLogin(role);
+    } catch (err: any) {
+      setError(err?.message || 'Quick login failed. Please try again.');
+    } finally {
+      setQuickLoadingRole(null);
+    }
+  };
+
+  if (user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF8F5] text-[#1E2B20]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-[#688661] animate-spin" />
+          <p className="text-sm font-semibold text-[#2D4233]">Redirecting to your workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#FAF8F5] text-[#1E2B20] dot-pattern">
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/25">
-              <Sparkles className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#688661] to-[#2D4233] text-white shadow-md border-t border-white/40">
+              <Sparkles className="h-6 w-6 text-[#EAF2E8]" />
             </div>
-            <span className="font-extrabold text-2xl tracking-tight text-slate-900 dark:text-white">
-              AI LifeDesk
+            <span className="font-black text-2xl tracking-tight text-[#1E2B20]">
+              LifeDesk AI
             </span>
           </Link>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white pt-2">
+          <h2 className="text-xl font-black text-[#1E2B20] pt-2">
             Welcome back
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs font-medium text-[#5A7A56]">
             Sign in to access your customer tickets or support agent workspace
           </p>
         </div>
 
-        {/* 1-Click Demo Login Panel for Evaluators & Judges */}
-        <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900 shadow-sm space-y-2.5">
-          <div className="flex items-center justify-between text-xs font-bold text-indigo-900 dark:text-indigo-200">
+        {/* 1-Click Fast Judge Access Card */}
+        <div className="card-3d p-4 rounded-2xl space-y-2.5 border border-[#E3DAC9]/80 shadow-sm bg-white/80">
+          <div className="flex items-center justify-between text-xs font-black text-[#1E2B20]">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              1-Click Fast Judge Access
+              <Sparkles className="w-3.5 h-3.5 text-[#688661]" />
+              Hackathon 1-Click Fast Access
             </span>
-            <span className="text-[10px] uppercase tracking-wider text-indigo-500 font-semibold">Demo Ready</span>
+            <span className="text-[10px] uppercase tracking-wider text-[#688661] bg-[#EAF2E8] px-2 py-0.5 rounded-full font-bold">
+              Instant Demo
+            </span>
           </div>
 
           <div className="grid grid-cols-1 gap-2">
             <button
               type="button"
-              onClick={() => quickLogin('CUSTOMER')}
-              className="flex items-center justify-between px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-slate-800 text-left transition-colors text-xs font-medium"
+              disabled={loading || !!quickLoadingRole}
+              onClick={() => handleQuickLogin('CUSTOMER')}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-[#E3DAC9] hover:bg-[#F4F0E8] text-left transition-all shadow-xs active:translate-y-0.5 text-xs font-semibold disabled:opacity-50"
             >
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-emerald-600" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-[#EAF2E8] flex items-center justify-center text-[#536E4D]">
+                  <User className="w-4 h-4" />
+                </div>
                 <div>
-                  <div className="font-bold text-slate-900 dark:text-white">Customer Portal (Rahul)</div>
-                  <div className="text-[10px] text-slate-400">customer@lifedesk.ai</div>
+                  <div className="font-bold text-[#1E2B20]">Customer Portal (Rahul)</div>
+                  <div className="text-[10px] text-[#5A7A56]">customer@lifedesk.ai</div>
                 </div>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              {quickLoadingRole === 'CUSTOMER' ? (
+                <Loader2 className="w-4 h-4 text-[#688661] animate-spin" />
+              ) : (
+                <ArrowRight className="w-3.5 h-3.5 text-[#688661]" />
+              )}
             </button>
 
             <button
               type="button"
-              onClick={() => quickLogin('AGENT')}
-              className="flex items-center justify-between px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800/80 hover:bg-indigo-50 dark:hover:bg-slate-800 text-left transition-colors text-xs font-medium"
+              disabled={loading || !!quickLoadingRole}
+              onClick={() => handleQuickLogin('AGENT')}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-[#E3DAC9] hover:bg-[#F4F0E8] text-left transition-all shadow-xs active:translate-y-0.5 text-xs font-semibold disabled:opacity-50"
             >
-              <div className="flex items-center gap-2">
-                <Headphones className="w-4 h-4 text-indigo-600" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-[#D2E3CF] flex items-center justify-center text-[#3D5438]">
+                  <Headphones className="w-4 h-4" />
+                </div>
                 <div>
-                  <div className="font-bold text-slate-900 dark:text-white">Support Agent (Alex Rivera)</div>
-                  <div className="text-[10px] text-slate-400">agent@lifedesk.ai</div>
+                  <div className="font-bold text-[#1E2B20]">Support Agent (Alex Rivera)</div>
+                  <div className="text-[10px] text-[#5A7A56]">agent@lifedesk.ai</div>
                 </div>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              {quickLoadingRole === 'AGENT' ? (
+                <Loader2 className="w-4 h-4 text-[#688661] animate-spin" />
+              ) : (
+                <ArrowRight className="w-3.5 h-3.5 text-[#688661]" />
+              )}
             </button>
 
             <button
               type="button"
-              onClick={() => quickLogin('ADMIN')}
-              className="flex items-center justify-between px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-800/80 hover:bg-purple-50 dark:hover:bg-slate-800 text-left transition-colors text-xs font-medium"
+              disabled={loading || !!quickLoadingRole}
+              onClick={() => handleQuickLogin('ADMIN')}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-[#E3DAC9] hover:bg-[#F4F0E8] text-left transition-all shadow-xs active:translate-y-0.5 text-xs font-semibold disabled:opacity-50"
             >
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-purple-600" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-[#2D4233] flex items-center justify-center text-[#FAF8F5]">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
                 <div>
-                  <div className="font-bold text-slate-900 dark:text-white">System Admin & Fraud Ops (Sarah)</div>
-                  <div className="text-[10px] text-slate-400">admin@lifedesk.ai</div>
+                  <div className="font-bold text-[#1E2B20]">System Admin &amp; Fraud Ops (Sarah)</div>
+                  <div className="text-[10px] text-[#5A7A56]">admin@lifedesk.ai</div>
                 </div>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              {quickLoadingRole === 'ADMIN' ? (
+                <Loader2 className="w-4 h-4 text-[#688661] animate-spin" />
+              ) : (
+                <ArrowRight className="w-3.5 h-3.5 text-[#688661]" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Traditional Credentials Form */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="card-3d rounded-2xl p-6 shadow-sm border border-[#E3DAC9]/80 bg-white">
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300">
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
               {error}
             </div>
           )}
@@ -129,7 +187,7 @@ export default function LoginPage() {
               placeholder="you@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              icon={<Mail className="w-4 h-4" />}
+              icon={<Mail className="w-4 h-4 text-[#5A7A56]" />}
               required
             />
 
@@ -139,14 +197,14 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              icon={<Lock className="w-4 h-4" />}
+              icon={<Lock className="w-4 h-4 text-[#5A7A56]" />}
               required
             />
 
             <Button
               type="submit"
               variant="primary"
-              className="w-full"
+              className="w-full mt-2 bg-[#688661] hover:bg-[#536E4D] text-white"
               loading={loading}
               icon={<ArrowRight className="w-4 h-4" />}
             >
@@ -154,9 +212,9 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
+          <div className="mt-5 pt-4 border-t border-[#E3DAC9] text-center text-xs text-[#5A7A56] font-medium">
             Don't have an account?{' '}
-            <Link href="/register" className="font-bold text-indigo-600 hover:underline">
+            <Link href="/register" className="font-bold text-[#2D4233] hover:text-[#688661] hover:underline">
               Create account
             </Link>
           </div>

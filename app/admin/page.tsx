@@ -9,7 +9,7 @@ import { AnalyticsCharts } from '@/components/dashboard/AnalyticsCharts';
 import { AIInsightCard } from '@/components/dashboard/AIInsightCard';
 import { useRouter } from 'next/navigation';
 import {
-  Ticket, ShieldAlert, CheckCircle, Clock, TrendingUp, Settings, BookOpen, Users,
+  Ticket, ShieldAlert, CheckCircle, Clock, Settings, BookOpen, Users,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -63,8 +63,8 @@ export default function AdminPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F9F7F7' }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#3F72AF', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -72,32 +72,25 @@ export default function AdminPage() {
   const m = data?.metrics;
 
   const adminLinks = [
-    { href: '/tickets', icon: <Ticket className="w-5 h-5" />, label: 'All Tickets', desc: 'Manage and assign tickets', color: 'indigo' },
-    { href: '/fraud', icon: <ShieldAlert className="w-5 h-5" />, label: 'Fraud Detection', desc: 'Review risk alerts', color: 'red' },
-    { href: '/agent', icon: <Users className="w-5 h-5" />, label: 'Agent Dashboard', desc: 'View agent workspace', color: 'emerald' },
-    { href: '/knowledge', icon: <BookOpen className="w-5 h-5" />, label: 'Knowledge Base', desc: 'Manage articles', color: 'sky' },
+    { href: '/tickets', icon: <Ticket className="w-5 h-5" />, label: 'All Tickets', desc: 'Manage and assign tickets' },
+    { href: '/fraud', icon: <ShieldAlert className="w-5 h-5" />, label: 'Fraud Detection', desc: 'Review risk alerts' },
+    { href: '/agent', icon: <Users className="w-5 h-5" />, label: 'Agent Dashboard', desc: 'View agent workspace' },
+    { href: '/knowledge', icon: <BookOpen className="w-5 h-5" />, label: 'Knowledge Base', desc: 'Manage articles' },
   ];
 
-  const colorMap: Record<string, string> = {
-    indigo: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800',
-    red: 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800',
-    emerald: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
-    sky: 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border-sky-200 dark:border-sky-800',
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col" style={{ background: '#F9F7F7' }}>
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 p-6 lg:p-8 overflow-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <Settings className="w-6 h-6 text-purple-500" />
+            <h1 className="text-2xl font-extrabold flex items-center gap-2" style={{ color: '#112D4E' }}>
+              <Settings className="w-6 h-6" style={{ color: '#3F72AF' }} />
               Admin Dashboard
             </h1>
-            <p className="text-sm text-slate-500 mt-1">Platform-wide overview and management controls</p>
+            <p className="text-sm mt-1" style={{ color: '#3F72AF' }}>Platform-wide overview and management controls</p>
           </div>
 
           {/* Stats Grid */}
@@ -114,14 +107,23 @@ export default function AdminPage() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`p-4 rounded-2xl border flex flex-col gap-3 hover:shadow-md transition-all ${colorMap[link.color]}`}
+                className="group p-5 rounded-2xl border flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: 'rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(12px)',
+                  borderColor: '#DBE2EF',
+                  boxShadow: '0 4px 16px rgba(63,114,175,0.10), 0 1.5px 0 #DBE2EF',
+                }}
               >
-                <div className="w-9 h-9 rounded-xl bg-white/60 dark:bg-black/20 flex items-center justify-center">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #3F72AF 0%, #112D4E 100%)', color: '#F9F7F7' }}
+                >
                   {link.icon}
                 </div>
                 <div>
-                  <p className="text-sm font-bold">{link.label}</p>
-                  <p className="text-xs opacity-70 mt-0.5">{link.desc}</p>
+                  <p className="text-sm font-bold" style={{ color: '#112D4E' }}>{link.label}</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#3F72AF' }}>{link.desc}</p>
                 </div>
               </Link>
             ))}
@@ -145,35 +147,46 @@ export default function AdminPage() {
           )}
 
           {/* Recent Tickets */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+          <div
+            className="rounded-2xl border p-5"
+            style={{
+              background: 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(12px)',
+              borderColor: '#DBE2EF',
+              boxShadow: '0 4px 24px rgba(63,114,175,0.08), 0 1.5px 0 #DBE2EF',
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">Recent Tickets (All Users)</h2>
-              <Link href="/tickets" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+              <h2 className="text-sm font-bold" style={{ color: '#112D4E' }}>Recent Tickets (All Users)</h2>
+              <Link href="/tickets" className="text-xs font-semibold hover:underline" style={{ color: '#3F72AF' }}>
                 View all →
               </Link>
             </div>
             {fetching ? (
               <div className="flex justify-center py-8">
-                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#3F72AF', borderTopColor: 'transparent' }} />
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="divide-y" style={{ borderColor: '#DBE2EF' }}>
                 {recentTickets.map((t) => (
                   <Link
                     key={t.id}
                     href={`/tickets/${t.id}`}
-                    className="flex items-center justify-between py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg px-2 transition-colors group"
+                    className="flex items-center justify-between py-3 rounded-lg px-2 transition-all duration-200 hover:bg-[#DBE2EF]/40 group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-xs text-slate-400 font-mono shrink-0">{t.ticketNumber}</span>
+                      <span className="text-xs font-mono shrink-0" style={{ color: '#3F72AF' }}>{t.ticketNumber}</span>
                       <div className="min-w-0">
-                        <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate block group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                        <span className="text-sm font-medium truncate block group-hover:text-[#3F72AF] transition-colors" style={{ color: '#112D4E' }}>
                           {t.subject}
                         </span>
-                        {t.customer && <span className="text-xs text-slate-400">{t.customer.name}</span>}
+                        {t.customer && <span className="text-xs" style={{ color: '#3F72AF' }}>{t.customer.name}</span>}
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0 ml-3">
+                    <span
+                      className="px-2 py-0.5 rounded-full text-xs font-bold shrink-0 ml-3"
+                      style={{ background: '#DBE2EF', color: '#112D4E' }}
+                    >
                       {t.status.replace(/_/g, ' ')}
                     </span>
                   </Link>

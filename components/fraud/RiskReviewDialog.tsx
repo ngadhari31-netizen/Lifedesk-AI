@@ -5,7 +5,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
-import { ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 interface RiskReviewDialogProps {
   isOpen: boolean;
@@ -58,7 +58,7 @@ export function RiskReviewDialog({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Authorized Risk Review Assessment">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs text-[#112D4E]/70 font-medium leading-relaxed">
           Record your supervisor review determination for this screened risk event. An audit log entry will be saved with your user ID and timestamp.
         </p>
 
@@ -89,7 +89,7 @@ export function RiskReviewDialog({
           rows={2}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#DBE2EF]">
           <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

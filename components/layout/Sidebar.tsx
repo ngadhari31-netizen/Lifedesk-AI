@@ -49,7 +49,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const adminLinks = [
     { href: '/admin', label: 'System Overview', icon: LayoutDashboard },
     { href: '/admin/tickets', label: 'All Tickets', icon: Ticket },
-    { href: '/admin/fraud', label: 'Fraud & Risk Screening', icon: ShieldAlert, badge: 'Shield' },
+    { href: '/admin/fraud', label: 'Fraud & Risk Screening', icon: ShieldAlert, badge: 'Risk' },
     { href: '/admin/users', label: 'User Management', icon: Users },
     { href: '/knowledge', label: 'Knowledge Base', icon: BookOpen },
     { href: '/admin/analytics', label: 'Analytics & Insights', icon: BarChart3 },
@@ -62,22 +62,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   else if (user?.role === 'AGENT') links = agentLinks;
 
   const content = (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 w-64 p-4">
+    <div className="flex flex-col h-full bg-[#112D4E] text-[#F9F7F7] border-r border-[#3F72AF]/20 w-64 p-4 shadow-xl">
       {/* Role Pill Header */}
       {user && (
-        <div className="mb-4 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
             <div
               className={clsx(
-                'w-2 h-2 rounded-full',
+                'w-2.5 h-2.5 rounded-full ring-2 ring-white/20',
                 user.role === 'ADMIN'
-                  ? 'bg-purple-500'
+                  ? 'bg-rose-400'
                   : user.role === 'AGENT'
-                  ? 'bg-indigo-500'
-                  : 'bg-emerald-500'
+                  ? 'bg-[#3F72AF]'
+                  : 'bg-emerald-400'
               )}
             />
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+            <span className="text-xs font-bold text-[#F9F7F7]">
               {user.role === 'ADMIN'
                 ? 'Admin Portal'
                 : user.role === 'AGENT'
@@ -85,15 +85,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 : 'Customer Portal'}
             </span>
           </div>
-          <span className="text-[10px] font-bold text-slate-400">24/7 Live</span>
+          <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-white/15 text-[#DBE2EF]">
+            Live
+          </span>
         </div>
       )}
 
       {/* Nav List */}
-      <nav className="flex-1 space-y-1 overflow-y-auto">
+      <nav className="flex-1 space-y-1.5 overflow-y-auto pr-1">
         {links.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && item.href !== '/admin' && item.href !== '/agent' && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/dashboard' &&
+              item.href !== '/admin' &&
+              item.href !== '/agent' &&
+              pathname.startsWith(item.href));
 
           return (
             <Link
@@ -101,17 +108,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               href={item.href}
               onClick={onClose}
               className={clsx(
-                'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group',
+                'flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 group',
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white'
+                  ? 'btn-3d text-white shadow-md'
+                  : 'text-[#DBE2EF] hover:bg-white/10 hover:text-[#F9F7F7]'
               )}
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 <Icon
                   className={clsx(
                     'w-4 h-4 transition-colors',
-                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-500'
+                    isActive ? 'text-white' : 'text-[#DBE2EF]/70 group-hover:text-[#F9F7F7]'
                   )}
                 />
                 <span>{item.label}</span>
@@ -119,10 +126,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               {item.badge && (
                 <span
                   className={clsx(
-                    'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider',
+                    'text-[10px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider',
                     isActive
-                      ? 'bg-white/20 text-white'
-                      : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300'
+                      ? 'bg-white/25 text-white'
+                      : 'bg-[#3F72AF]/40 text-[#DBE2EF] border border-[#3F72AF]/40'
                   )}
                 >
                   {item.badge}
@@ -133,15 +140,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      {/* Footer Info Card */}
-      <div className="mt-auto pt-4 border-t border-slate-200 dark:border-slate-800">
-        <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI LifeDesk Core</span>
+      {/* Footer System Status Card */}
+      <div className="mt-auto pt-4 border-t border-white/10">
+        <div className="p-3.5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#DBE2EF]">
+            <Sparkles className="w-3.5 h-3.5 text-[#3F72AF]" />
+            <span>AI LifeDesk Engine</span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-            Gemini JSON Mode + Fraud Screening Active
+          <p className="text-[11px] text-[#DBE2EF]/60 mt-1">
+            Gemini Multimodal & Real-time Fraud Screening
           </p>
         </div>
       </div>
@@ -157,7 +164,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {isOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#112D4E]/70 backdrop-blur-sm transition-opacity"
             onClick={onClose}
           />
           <div className="fixed inset-y-0 left-0 w-64 shadow-2xl z-50">
