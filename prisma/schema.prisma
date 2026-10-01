@@ -1,0 +1,205 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         String         @default("CUSTOMER") // CUSTOMER, AGENT, ADMIN
+  language     String         @default("en")       // en, hi, mr
+  avatarUrl    String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  customerTickets Ticket[]     @relation("CustomerTickets")
+  assignedTickets Ticket[]     @relation("AgentTickets")
+  messages        Message[]
+  notifications   Notification[]
+  feedback        Feedback[]
+  fraudEvents     FraudEvent[] @relation("CustomerFraudEvents")
+  reviewedFraud   FraudEvent[] @relation("ReviewerFraudEvents")
+  auditLogs       AuditLog[]
+  assignedByLogs  TicketAssignment[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id              String       @id @default(cuid())
+  ticketNumber    String       @unique // e.g. LD-1001
+  customerId      String
+  categoryId      String?
+  subject         String
+  description     String
+  status          String       @default("OPEN") // OPEN, ASSIGNED, IN_PROGRESS, WAITING_FOR_CUSTOMER, ESCALATED, RESOLVED, CLOSED
+  priority        String       @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  sentiment       String       @default("neutral") // neutral, positive, frustrated, distressed, urgent
+  aiSummary       String?
+  assignedAgentId String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  resolvedAt      DateTime?
+
+  customer        User         @relation("CustomerTickets", fields: [customerId], references: [id], onDelete: Cascade)
+  assignedAgent   User?        @relation("AgentTickets", fields: [assignedAgentId], references: [id], onDelete: SetNull)
+  category        Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  messages        Message[]
+  aiAnalyses      AiAnalysis[]
+  fraudEvents     FraudEvent[]
+  feedback        Feedback[]
+  attachments     Attachment[]
+  assignments     TicketAssignment[]
+}
+
+model Message {
+  id          String       @id @default(cuid())
+  ticketId    String
+  senderId    String
+  senderType  String       // CUSTOMER, AGENT, AI, SYSTEM
+  content     String
+  isInternal  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender      User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+}
+
+model TicketAssignment {
+  id         String   @id @default(cuid())
+  ticketId   String
+  agentId    String
+  assignedBy String
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  assigner   User     @relation(fields: [assignedBy], references: [id], onDelete: Cascade)
+}
+
+model AiAnalysis {
+  id              String   @id @default(cuid())
+  ticketId        String
+  intent          String
+  category        String
+  subcategory     String?
+  priority        String
+  sentiment       String
+  confidence      Float
+  summary         String
+  suggestedAction String
+  requiresHuman   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  ticket          Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model FraudEvent {
+  id                String        @id @default(cuid())
+  customerId        String
+  ticketId          String?
+  riskLevel         String        // LOW, MEDIUM, HIGH, CRITICAL
+  riskScore         Int           // 0-100
+  eventType         String        // payment_anomaly, duplicate_charge_claim, refund_frequency, account_takeover_signals
+  status            String        @default("PENDING_REVIEW") // PENDING_REVIEW, REVIEWED, ESCALATED, DISMISSED
+  explanation       String
+  recommendedAction String?
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  createdAt         DateTime      @default(now())
+
+  customer          User          @relation("CustomerFraudEvents", fields: [customerId], references: [id], onDelete: Cascade)
+  reviewer          User?         @relation("ReviewerFraudEvents", fields: [reviewedBy], references: [id], onDelete: SetNull)
+  ticket            Ticket?       @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+  signals           FraudSignal[]
+}
+
+model FraudSignal {
+  id           String     @id @default(cuid())
+  fraudEventId String
+  signal       String
+  severity     String     @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  createdAt    DateTime   @default(now())
+
+  fraudEvent   FraudEvent @relation(fields: [fraudEventId], references: [id], onDelete: Cascade)
+}
+
+model KnowledgeArticle {
+  id        String   @id @default(cuid())
+  title     String
+  category  String   // Account, Payments, Orders, Delivery, Refunds, Subscriptions, Security, Technical Support, Billing, General
+  content   String
+  tags      String   // Comma separated
+  status    String   @default("PUBLISHED") // PUBLISHED, DRAFT
+  views     Int      @default(0)
+  helpful   Int      @default(0)
+  notHelpful Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // TICKET_CREATED, TICKET_ASSIGNED, AGENT_REPLIED, STATUS_CHANGED, TICKET_RESOLVED, FRAUD_ALERT
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  ticketId   String
+  customerId String
+  rating     Int      // 1 to 5
+  isResolved Boolean  @default(true)
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  ticketId  String?
+  messageId String?
+  fileName  String
+  fileType  String
+  fileSize  Int
+  fileUrl   String
+  createdAt DateTime @default(now())
+
+  ticket    Ticket?  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  message   Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   // e.g. PRIORITY_CHANGED, TICKET_ASSIGNED, FRAUD_REVIEWED
+  resource   String   // e.g. Ticket, FraudEvent, KnowledgeArticle
+  resourceId String
+  metadata   String?  // JSON string
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
